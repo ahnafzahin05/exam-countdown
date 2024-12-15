@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Countdown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Background Gradient */
+    body {
+      background: linear-gradient(
+        to bottom, 
+        #1f0030, 
+        #140021, 
+        #0e0018, 
+        #0a0012
+      );
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+    }
+
+    /* Title Section */
+    .title {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-top: 60px; /* Moved further down */
+      margin-bottom: 60px; /* Increased spacing between title and table */
+      color: #f1e4ff;
+      text-shadow: 
+        0 0 15px rgba(160, 32, 240, 0.6), 
+        0 0 30px rgba(160, 32, 240, 0.8), 
+        0 0 45px rgba(160, 32, 240, 1); /* Slightly more glow */
+    }
+
+    /* Table Styling */
+    table {
+      width: 80%;
+      max-width: 800px;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 
+        0 0 15px rgba(160, 32, 240, 0.8), 
+        0 0 25px rgba(160, 32, 240, 0.6), 
+        0 0 50px rgba(160, 32, 240, 0.4);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 12px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f1e4ff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    td {
+      padding: 12px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 400;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e1d0f9;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Blinking/Glowing Animation for Days/Hours Left */
+    .countdown {
+      animation: glow 1.5s infinite;
+    }
+
+    @keyframes glow {
+      0% {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(160, 32, 240, 0.8);
+        color: white;
+      }
+      50% {
+        text-shadow: 0 0 20px rgba(160, 32, 240, 1), 0 0 30px rgba(160, 32, 240, 1);
+        color: #a020f0;
+      }
+      100% {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(160, 32, 240, 0.8);
+        color: white;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Subtle Title -->
+  <div class="title">Exam Countdown</div>
+
+  <!-- Countdown Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Exam Name</th>
+        <th>Exam Date</th>
+        <th>Exam Time</th>
+        <th>Countdown</th>
+      </tr>
+    </thead>
+    <tbody id="exam-table-body">
+      <tr>
+        <td>BUP</td>
+        <td>14/12/2024</td>
+        <td>10am - 11am</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>KUET</td>
+        <td>11/01/2025</td>
+        <td>9.30am - 12.30pm</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>BUET Preli</td>
+        <td>23/01/2025</td>
+        <td>&nbsp;</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>RUET Preli</td>
+        <td>08/02/2025</td>
+        <td>&nbsp;</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>BUET Written</td>
+        <td>13/02/2025</td>
+        <td>10am - 12pm</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>DU A UNIT</td>
+        <td>15/02/2025</td>
+        <td>11am - 12.30pm</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>RUET Written</td>
+        <td>20/02/2025</td>
+        <td>&nbsp;</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>MIST</td>
+        <td>22/02/2025</td>
+        <td>10am - 1pm</td>
+        <td class="countdown">&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    function calculateCountdown() {
+      const today = new Date();
+      const rows = document.querySelectorAll("#exam-table-body tr");
+
+      rows.forEach((row) => {
+        const dateCell = row.children[1];
+        const countdownCell = row.children[3];
+        const examDateStr = dateCell.textContent.trim();
+
+        if (examDateStr) {
+          const [day, month, year] = examDateStr.split("/").map(Number);
+          const examDate = new Date(year, month - 1, day);
+          const diffTime = examDate - today;
+
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+
+          if (diffDays > 7) {
+            countdownCell.textContent = `${diffDays} days`;
+          } else if (diffDays >= 0) {
+            countdownCell.textContent = `${diffHours} hours`;
+          } else {
+            countdownCell.textContent = "Expired";
+            countdownCell.classList.remove("countdown");
+          }
+        }
+      });s
+    }
+
+    setInterval(calculateCountdown, 1000);
+  </script>
+</body>
+</html>
+s
